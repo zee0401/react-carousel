@@ -8,13 +8,22 @@ const Carousel = ({ children }) => {
 
   const intervalRef = useRef(0);
 
-  function handleInterval() {
+  function slideInfo() {
     const slideRef = slideCurrentRef.current;
     const slides = slideRef.children;
+    const count = slides.length;
+
+    return { slides, count };
+  }
+
+  function handleInterval() {
+    const { slides } = slideInfo();
+
     slides[0].setAttribute("data-active", true);
+
     intervalRef.current = setInterval(() => {
       setCurrentSlide((prev) => {
-        const count = slides.length;
+        const { count } = slideInfo();
         const newIndex = prev === count - 1 ? 0 : prev + 1;
         [...slides].forEach((slide, index) => {
           slide.setAttribute("data-active", index === newIndex);
@@ -25,8 +34,7 @@ const Carousel = ({ children }) => {
   }
 
   useEffect(() => {
-    const slideRef = slideCurrentRef.current;
-    const slides = slideRef.children;
+    const { slides } = slideInfo();
     slides[0].setAttribute("data-active", true);
 
     handleInterval();
@@ -34,9 +42,7 @@ const Carousel = ({ children }) => {
 
   function handlePrev() {
     clearInterval(intervalRef.current);
-    const slideRef = slideCurrentRef.current;
-    const slides = slideRef.children;
-    const count = slides.length;
+    const { slides, count } = slideInfo();
 
     const newIndex = currentSlide === 0 ? count - 1 : currentSlide - 1;
 
@@ -49,10 +55,7 @@ const Carousel = ({ children }) => {
 
   function handleNext() {
     clearInterval(intervalRef.current);
-    const slideRef = slideCurrentRef.current;
-    const slides = slideRef.children;
-    const count = slides.length;
-
+    const { slides, count } = slideInfo();
     const newIndex = currentSlide === count - 1 ? 0 : currentSlide + 1;
 
     [...slides].forEach((slide, index) => {
@@ -63,15 +66,36 @@ const Carousel = ({ children }) => {
     setCurrentSlide(newIndex);
   }
 
+  const handleStep = (newIndex) => () => {
+    clearInterval(intervalRef.current);
+    const { slides, count } = slideInfo();
+
+    [...slides].forEach((slide, index) => {
+      slide.setAttribute("data-active", index === newIndex);
+    });
+    handleInterval();
+    setCurrentSlide(newIndex);
+  };
+
   return (
     <div className="carousel">
       {currentSlide}
       <div ref={slideCurrentRef} className="box">
         {children}
       </div>
-
-      <button onClick={handlePrev}>Prev</button>
-      <button onClick={handleNext}>Next</button>
+      <div className="controls">
+        <button onClick={handlePrev}>Prev</button>
+        <div className="stepper">
+          {Array.from(children).map((_, index) => {
+            return (
+              <button onClick={handleStep(index)} key={index} className="step">
+                {index}
+              </button>
+            );
+          })}
+        </div>
+        <button onClick={handleNext}>Next</button>
+      </div>
     </div>
   );
 };
