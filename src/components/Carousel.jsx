@@ -7,14 +7,22 @@ const Carousel = ({ children }) => {
   const slideCurrentRef = useRef();
 
   useEffect(() => {
+    const slideRef = slideCurrentRef.current;
+    const slides = slideRef.children;
+    slides[0].setAttribute("data-active", true);
+
     setInterval(() => {
       setCurrentSlide((prev) => {
         // slideRef.style.opacity = 1;
-        const slideRef = slideCurrentRef.current;
-        console.log(slideRef.children);
-        const count = slideRef.children.length;
 
-        const newIndex = prev === count ? 0 : prev + 1;
+        const count = slides.length;
+
+        const newIndex = prev === count - 1 ? 0 : prev + 1;
+
+        [...slides].forEach((slide, index) => {
+          slide.setAttribute("data-active", index === newIndex);
+        });
+
         return newIndex;
       });
     }, 1000);

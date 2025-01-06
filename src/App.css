@@ -11,6 +11,14 @@
   display: flex;
 }
 
+.box img[data-active="true"] {
+  opacity: 1;
+}
+
+.box img[data-active="false"] {
+  opacity: 0;
+}
+
 .box {
   margin-left: 40px;
   margin-right: 40px;
