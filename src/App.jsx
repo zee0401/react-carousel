@@ -10,7 +10,7 @@ import five from "./images/5.jpg";
 function App() {
   return (
     <>
-      <div className="carousel">
+      <div className="app">
         <Carousel>
           <img id="slideImg0" src={one} />
           <img id="slideImg1" src={two} />
