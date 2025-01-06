@@ -90,7 +90,6 @@ const Carousel = ({ children }) => {
 
   return (
     <div className="carousel">
-      {currentSlide}
       <div
         ref={slideCurrentRef}
         onMouseEnter={handleMouseEnter}
@@ -108,7 +107,7 @@ const Carousel = ({ children }) => {
                 ref={activeSlideRef}
                 onClick={handleStep(index)}
                 key={index}
-                className="step"
+                className={`step ${index === currentSlide ? "active" : ""}`}
               >
                 {index}
               </button>
