@@ -32,7 +32,20 @@ const Carousel = ({ children }) => {
     handleInterval();
   }, []);
 
-  function handlePrev() {}
+  function handlePrev() {
+    clearInterval(intervalRef.current);
+    const slideRef = slideCurrentRef.current;
+    const slides = slideRef.children;
+    const count = slides.length;
+
+    const newIndex = currentSlide === 0 ? count - 1 : currentSlide - 1;
+
+    [...slides].forEach((slide, index) => {
+      slide.setAttribute("data-active", index === newIndex);
+    });
+    setCurrentSlide(newIndex);
+    handleInterval();
+  }
 
   function handleNext() {
     clearInterval(intervalRef.current);
