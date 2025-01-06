@@ -8,6 +8,8 @@ const Carousel = ({ children }) => {
 
   const intervalRef = useRef(0);
 
+  const activeSlideRef = useRef();
+
   function slideInfo() {
     const slideRef = slideCurrentRef.current;
     const slides = slideRef.children;
@@ -28,6 +30,7 @@ const Carousel = ({ children }) => {
         [...slides].forEach((slide, index) => {
           slide.setAttribute("data-active", index === newIndex);
         });
+
         return newIndex;
       });
     }, 2000);
@@ -36,7 +39,7 @@ const Carousel = ({ children }) => {
   useEffect(() => {
     const { slides } = slideInfo();
     slides[0].setAttribute("data-active", true);
-
+    console.log(activeSlideRef.current);
     handleInterval();
   }, []);
 
@@ -68,7 +71,7 @@ const Carousel = ({ children }) => {
 
   const handleStep = (newIndex) => () => {
     clearInterval(intervalRef.current);
-    const { slides, count } = slideInfo();
+    const { slides } = slideInfo();
 
     [...slides].forEach((slide, index) => {
       slide.setAttribute("data-active", index === newIndex);
@@ -77,10 +80,23 @@ const Carousel = ({ children }) => {
     setCurrentSlide(newIndex);
   };
 
+  function handleMouseEnter() {
+    clearInterval(intervalRef.current);
+  }
+
+  function handleMouseLeave() {
+    handleInterval();
+  }
+
   return (
     <div className="carousel">
       {currentSlide}
-      <div ref={slideCurrentRef} className="box">
+      <div
+        ref={slideCurrentRef}
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
+        className="box"
+      >
         {children}
       </div>
       <div className="controls">
@@ -88,7 +104,12 @@ const Carousel = ({ children }) => {
         <div className="stepper">
           {Array.from(children).map((_, index) => {
             return (
-              <button onClick={handleStep(index)} key={index} className="step">
+              <button
+                ref={activeSlideRef}
+                onClick={handleStep(index)}
+                key={index}
+                className="step"
+              >
                 {index}
               </button>
             );
